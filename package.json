@@ -1,0 +1,25 @@
+{
+  "name": "readline-vim",
+  "version": "0.0.0",
+  "description": "Adds vim bindings to nodejs readline.",
+  "main": "readline-vim.js",
+  "scripts": {
+    "test": "trap test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/thlorenz/readline-vim.git"
+  },
+  "keywords": [
+    "readline",
+    "vim",
+    "shortcuts",
+    "console",
+    "keyboard",
+    "keys"
+  ],
+  "author": "Thorsten Lorenz <thlorenz@gmx.de> (thlorenz.com)",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "26f68bc9dc257f5f511165d0949dc97a73b7625d"
+}
