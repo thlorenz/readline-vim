@@ -1,9 +1,12 @@
 'use strict';
+var EventEmitter = require('events').EventEmitter;
 
 module.exports = function override_ttyWrite(rli) {
   var original_ttyWrite = rli._ttyWrite
     , normal = false
-    , buf = [];
+    , buf = []
+    , emitter = new EventEmitter()
+    , emit = emitter.emit.bind(emitter);
 
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
@@ -11,8 +14,10 @@ module.exports = function override_ttyWrite(rli) {
     key = key || {};
 
     function normalMode() {
+      if (normal) return;
       self._moveCursor(-1);
       normal = true;
+      emit('normal');
     }
 
     function insertMode() {
@@ -98,4 +103,6 @@ module.exports = function override_ttyWrite(rli) {
         return this._moveCursor(Infinity);
     }
   };
+
+  return emitter;
 };

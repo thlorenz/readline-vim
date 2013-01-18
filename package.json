@@ -4,7 +4,7 @@
   "description": "Adds vim bindings to nodejs readline.",
   "main": "readline-vim.js",
   "scripts": {
-    "test": "node-trap ./test/**/*.js"
+    "test": "node-trap test/**/*.js && node-trap test/*.js"
   },
   "repository": {
     "type": "git",
