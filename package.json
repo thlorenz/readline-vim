@@ -1,6 +1,6 @@
 {
   "name": "readline-vim",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Adds vim bindings to nodejs readline.",
   "main": "readline-vim.js",
   "scripts": {
