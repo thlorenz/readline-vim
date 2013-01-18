@@ -1,15 +1,12 @@
 'use strict';
-var log = require('../utl').log
-  , state = require('../state')
-  , indicatorTime = 50;
 
-module.exports = function override_ttyWrite(repl) {
-  var original_ttyWrite = repl.rli._ttyWrite
+module.exports = function override_ttyWrite(rli) {
+  var original_ttyWrite = rli._ttyWrite
     , normal = false
     , buf = [];
 
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
-  repl.rli._ttyWrite = function(code, key) {
+  rli._ttyWrite = function(code, key) {
     var self = this;
     key = key || {};
 
@@ -22,17 +19,11 @@ module.exports = function override_ttyWrite(repl) {
       normal = false;
     }
 
-    if (state.feedingFile) {
-      // makes sense to be in insert mode after file is piped
-      normal = false;
-      return original_ttyWrite.apply(repl.rli, arguments);
-    }
-
     // normal mode via escape or ctrl-[
     if (key.name == 'escape') return normalMode();
     if (key.name == '[' && key.ctrl) return normalMode();
 
-    if (!normal) return original_ttyWrite.apply(repl.rli, arguments);
+    if (!normal) return original_ttyWrite.apply(rli, arguments);
 
     function deleteLine() {
       self._deleteLineLeft();
