@@ -21,5 +21,8 @@
   "author": "Thorsten Lorenz <thlorenz@gmx.de> (thlorenz.com)",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "26f68bc9dc257f5f511165d0949dc97a73b7625d"
+  "gitHead": "26f68bc9dc257f5f511165d0949dc97a73b7625d",
+  "devDependencies": {
+    "trap": "git://github.com/thlorenz/trap.git#ok"
+  }
 }
