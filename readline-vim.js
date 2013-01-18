@@ -44,7 +44,7 @@ module.exports = function override_ttyWrite(rli) {
         return insertMode();
       // insert mode via a
       case 'a':
-        if (key.shift) this._moveCursor(Infinity), insertMode();
+        if (key.shift) return this._moveCursor(Infinity), insertMode();
         return this._moveCursor(+1), insertMode();
         break;
         

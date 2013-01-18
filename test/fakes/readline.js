@@ -2,63 +2,47 @@
 /*jshint asi: true*/
 
 module.exports = function () {
-  var ttyWrite
-    , moveCursor
-    , wordLeft
-    , wordRight
-    , deleteLeft
-    , deleteRight
-    , deleteWordLeft
-    , deleteWordRight
-    , deleteLineLeft
-    , deleteLineRight
-    , historyPrev
-    , historyNext
-    , line
-    ;
+  var self =  {
 
-  function reset() {
-    ttyWrite        =  [];
-    moveCursor      =  []
+      _ttyWrite        :  function (code, key) { this.ttyWrite.push({ code :  code, key :  key }) }
+    , _moveCursor      :  function (arg) { this.moveCursor.push(arg) }
 
-    wordLeft        =  0;
-    wordRight       =  0;
+    , _wordLeft        :  function () { this.wordLeft++ }
+    , _wordRight       :  function () { this.wordRight++ }
 
-    deleteLeft      =  0;
-    deleteRight     =  0;
-    deleteWordLeft  =  0;
-    deleteWordRight =  0;
-    deleteLineLeft  =  0;
-    deleteLineRight =  0;
+    , _deleteLeft      :  function () { this.deleteLeft++ }
+    , _deleteRight     :  function () { this.deleteRight++ }
+    , _deleteWordLeft  :  function () { this.deleteWordLeft++ }
+    , _deleteWordRight :  function () { this.deleteWordRight++ }
+    , _deleteLineLeft  :  function () { this.deleteLineLeft++ }
+    , _deleteLineRight :  function () { this.deleteLineRight++ }
 
-    historyPrev     =  0;
-    historyNext     =  0;
+    , _historyPrev     :  function () { this.historyPrev++ }
+    , _historyNext     :  function () { this.historyNext++ }
 
-    line            =  0;
-  }
+    , _line            :  function () { this.line++ }
 
-  reset()
+    , reset: function () {
+      this.ttyWrite        =  [];
+      this.moveCursor      =  []
 
-  return {
+      this.wordLeft        =  0;
+      this.wordRight       =  0;
 
-      _ttyWrite        :  function (code, key) { ttyWrite.push({ code :  code, key :  key }) }
-    , _moveCursor      :  function (arg) { moveCursor.push(arg) }
+      this.deleteLeft      =  0;
+      this.deleteRight     =  0;
+      this.deleteWordLeft  =  0;
+      this.deleteWordRight =  0;
+      this.deleteLineLeft  =  0;
+      this.deleteLineRight =  0;
 
-    , _wordLeft        :  function () { wordLeft++ }
-    , _wordRight       :  function () { wordRight++ }
+      this.historyPrev     =  0;
+      this.historyNext     =  0;
 
-    , _deleteLeft      :  function () { deleteLeft++ }
-    , _deleteRight     :  function () { deleteRight++ }
-    , _deleteWordLeft  :  function () { deleteWordLeft++ }
-    , _deleteWordRight :  function () { deleteWordRight++ }
-    , _deleteLineLeft  :  function () { deleteLineLeft++ }
-    , _deleteLineRight :  function () { deleteLineRight++ }
-
-    , _historyPrev     :  function () { historyPrev++ }
-    , _historyNext     :  function () { historyNext++ }
-
-    , _line            :  function () { line++ }
-
-    , reset            :  reset
+      this.line            =  0;
+    }
   };
+
+  self.reset();
+  return self;
 };

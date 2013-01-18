@@ -17,17 +17,20 @@ function key(k) {
   rli._ttyWrite(null, { name: name, ctrl: ctrl, alt: alt, shift: shift })
 }
 
+function resetModes() {
+  normal = 0
+  insert = 0
+}
+
 function setup() {
   rli = createRli()
   rlv = readlineVim(rli)
   rlv.events.on('normal', function () { normal++ })
   rlv.events.on('insert', function () { insert++ })
-
-  normal = 0
-  insert = 0
+  resetModes()
 }
 
-test('switching to normal mode', function (t) {
+test('\nswitching to normal mode', function (t) {
   setup()
   
   var k = 'escape'
@@ -47,11 +50,12 @@ test('switching to normal mode', function (t) {
   t.end()
 })
 
-test('switching to insert mode', function (t) {
+test('\nswitching to insert mode', function (t) {
   setup()
 
   function normalToInsert(k) {
     rli.reset()
+    resetModes()
     rlv.forceNormal()
     key(k)
     t.equal(insert, 1, 'when in normal mode, [' + k + '] switches to insert mode')
@@ -62,7 +66,15 @@ test('switching to insert mode', function (t) {
   t.equal(insert, 0, 'when in insert mode, [' + k + '] not switches to insert mode')
 
   normalToInsert('i')
-  normalToInsert('a')
+  t.equal(rli.moveCursor.length, 0, 'does not move cursor')
 
+  normalToInsert('a')
+  t.equal(rli.moveCursor.pop(), 1, 'and moves cursor one to the right')
+
+  normalToInsert('shift-i')
+  t.equal(rli.moveCursor.pop(), -Infinity, 'and moves cursor to the beginning of the line')
+
+  normalToInsert('shift-a')
+  t.equal(rli.moveCursor.pop(), Infinity, 'and moves cursor to the end of the line')
   t.end()
 })
