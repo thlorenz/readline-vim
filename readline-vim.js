@@ -22,6 +22,7 @@ module.exports = function override_ttyWrite(rli) {
 
     function insertMode() {
       normal = false;
+      emit('insert');
     }
 
     // normal mode via escape or ctrl-[
@@ -104,5 +105,13 @@ module.exports = function override_ttyWrite(rli) {
     }
   };
 
-  return emitter;
+  function forceNormal(silent) {
+    normal = true;
+    if (!silent) emit('normal');
+  }
+
+  return { 
+      events      :  emitter
+    , forceNormal :  forceNormal
+  };
 };
