@@ -64,9 +64,11 @@ module.exports = function override_ttyWrite(rli) {
       // movements
       case 'h':
         if (prev == 'd') return this._deleteLeft();
+        if (prev == 'c') return this._deleteLeft(), insertMode();
         return this._moveCursor(-1);
       case 'l':
         if (prev == 'd') return this._deleteRight();
+        if (prev == 'c') return this._deleteRight(), insertMode();
         return this._moveCursor(+1);
       case 'b':
         if (prev == 'd') return this._deleteWordLeft();
