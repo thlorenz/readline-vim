@@ -5,7 +5,7 @@ var test = require('tap').test
   , hns = require('./utils/harness')()
 
 test('\nswitching to normal mode', function (t) {
-  hns.setup()
+  hns.reset()
   
   var k = 'escape'
   hns.key(k)
@@ -25,7 +25,7 @@ test('\nswitching to normal mode', function (t) {
 })
 
 test('\nswitching to insert mode', function (t) {
-  hns.setup()
+  hns.reset()
 
   function normalToInsert(k) {
     hns.rli.reset()

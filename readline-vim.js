@@ -110,8 +110,14 @@ module.exports = function override_ttyWrite(rli) {
     if (!silent) emit('normal');
   }
 
+  function forceInsert(silent) {
+    normal = false;
+    if (!silent) emit('insert');
+  }
+
   return { 
       events      :  emitter
     , forceNormal :  forceNormal
+    , forceInsert :  forceInsert
   };
 };

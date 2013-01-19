@@ -11,8 +11,9 @@ module.exports = function createHarness () {
     , normal     : undefined
     , insert     : undefined
     , resetModes : resetModes
-    , setup      : setup
+    , reset      : reset
     , key        : key
+    , code       : code
   };
 
   function key(k) {
@@ -24,19 +25,24 @@ module.exports = function createHarness () {
     hns.rli._ttyWrite(null, { name: name, ctrl: ctrl, alt: alt, shift: shift })
   }
 
+  function code(code_) {
+    hns.rli._ttyWrite(code_, { })
+  }
+
   function resetModes() {
     hns.normal = 0
     hns.insert = 0
   }
 
-  function setup() {
+  function reset() {
     hns.rli = createRli()
     hns.rlv = readlineVim(hns.rli)
+    hns.rlv.events.removeAllListeners()
     hns.rlv.events.on('normal', function () { hns.normal++ })
     hns.rlv.events.on('insert', function () { hns.insert++ })
     hns.resetModes()
   }
-  setup()
+  reset()
 
   return hns;
 };
