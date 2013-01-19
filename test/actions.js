@@ -18,16 +18,11 @@ test('delete', function (t) {
   t.equal(hns.rli.deleteLineRight, 0, 'in insert mode' + hns.keyed + 'does not delete line right')
 
   // staying in normal mode for remaining test
-  hns.reset()
-
-  hns.key('d')
+  hns.reset().key('d')
   t.equal(hns.rli.deleteLineLeft, 0, hns.keyed + 'does not delete line left')
   t.equal(hns.rli.deleteLineRight, 0, hns.keyed + 'does not delete line right')
 
-  hns.reset()
-  hns.rlv.forceNormal()
-
-  hns.seq('d d')
+  hns.reset().seq('d d')
 
   t.equal(hns.rli.deleteLineLeft, 1, hns.seqed + 'deletes line left once')
   t.equal(hns.rli.deleteLineRight, 1, hns.seqed + 'deletes line right once')
