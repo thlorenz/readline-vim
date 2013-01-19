@@ -38,7 +38,7 @@ A subset of vim keybindings is supported by `readline-vim`:
 
 ### Normal Mode
 
-- `i`, `I`, `a`, `A`: insert mode with the usual side effects
+- `i`, `I`, `a`, `A`: insert mode with the expected side effects
 
 #### Movements
 
@@ -53,10 +53,16 @@ A subset of vim keybindings is supported by `readline-vim`:
 
 - `cb`: change word left
 - `cw`: change word right
+- `ch`: change left
+- `cl`: change right
 - `cc`, `C` change line
+
 - `db`: delete word left
 - `dw`: delete word right
+- `dh`: delete left
+- `dl`: delete right
 - `dd`, `D` delete line
+
 - `x` delete right
 - `X` delete left
 
