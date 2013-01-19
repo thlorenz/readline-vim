@@ -60,6 +60,8 @@ module.exports = function createHarness () {
     hns.resetModes()
 
     hns.keyed = hns.coded = hns.seqed = undefined
+    
+    return hns;
   }
   reset()
 

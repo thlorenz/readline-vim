@@ -4,7 +4,7 @@
 var test = require('tap').test
   , hns = require('./utils/harness')()
 
-test('deletion', function (t) {
+test('delete', function (t) {
 
   hns.key('shift-d')
   t.equal(hns.rli.deleteLineLeft, 1, hns.keyed + 'deletes line left once')
@@ -31,6 +31,23 @@ test('deletion', function (t) {
 
   t.equal(hns.rli.deleteLineLeft, 1, hns.seqed + 'deletes line left once')
   t.equal(hns.rli.deleteLineRight, 1, hns.seqed + 'deletes line right once')
+
+  t.end()
+})
+
+test('change', function (t) {
+
+  hns.reset().key('shift-c')
+
+  t.equal(hns.rli.deleteLineLeft, 1, hns.keyed + 'deletes line left once')
+  t.equal(hns.rli.deleteLineRight, 1, hns.keyed + 'deletes line right once')
+  t.equal(hns.insert, 1, 'switches to insert mode')
+
+  hns.reset().seq('c c')
+
+  t.equal(hns.rli.deleteLineLeft, 1, hns.seqed + 'deletes line left once')
+  t.equal(hns.rli.deleteLineRight, 1, hns.seqed + 'deletes line right once')
+  t.equal(hns.insert, 1, 'switches to insert mode')
 
   t.end()
 })
