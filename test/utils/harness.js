@@ -14,6 +14,10 @@ module.exports = function createHarness () {
     , reset      : reset
     , key        : key
     , code       : code
+    , seq        : seq
+    , keyed      : undefined
+    , coded      : undefined
+    , seqed      : undefined
   };
 
   function key(k) {
@@ -23,10 +27,20 @@ module.exports = function createHarness () {
     else name = keys[1], ctrl = keys[0] === 'ctrl', alt = keys[0] === 'alt', shift = keys[0] = 'shift'
 
     hns.rli._ttyWrite(null, { name: name, ctrl: ctrl, alt: alt, shift: shift })
+    hns.keyed = ' [' + k + '] '
   }
 
   function code(code_) {
     hns.rli._ttyWrite(code_, { })
+    hns.coded = ' [' + code_ + '] '
+  }
+
+  function seq(seq_) {
+    var keys = seq_.split(' ')
+
+    hns.key(keys.shift())
+    hns.key(keys.shift())
+    hns.seqed = ' [' + seq_ + '] '
   }
 
   function resetModes() {
@@ -44,6 +58,8 @@ module.exports = function createHarness () {
 
     hns.rlv.forceNormal()
     hns.resetModes()
+
+    hns.keyed = hns.coded = hns.seqed = undefined
   }
   reset()
 

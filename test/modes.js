@@ -10,18 +10,18 @@ test('\nswitching to normal mode', function (t) {
   
   var k = 'escape'
   hns.key(k)
-  t.equal(hns.normal, 1, 'when in insert mode, [' + k + '] switches to normal mode')
+  t.equal(hns.normal, 1, 'when in insert mode,' + hns.keyed + 'switches to normal mode')
   hns.key(k)
-  t.equal(hns.normal, 1, 'when in normal mode, [' + k + '] not switches to normal mode')
+  t.equal(hns.normal, 1, 'when in normal mode,' + hns.keyed + 'not switches to normal mode')
 
   hns.rli.reset()
   hns.rlv.forceInsert()
 
   k = 'Ctrl-['
   hns.key(k)
-  t.equal(hns.normal, 1, 'when in insert mode, [' + k + '] switches to normal mode')
+  t.equal(hns.normal, 1, 'when in insert mode,' + hns.keyed + 'switches to normal mode')
   hns.key(k)
-  t.equal(hns.normal, 1, 'when in normal mode, [' + k + '] not switches to normal mode')
+  t.equal(hns.normal, 1, 'when in normal mode,' + hns.keyed + 'not switches to normal mode')
 
   t.end()
 })
@@ -31,15 +31,14 @@ test('\nswitching to insert mode', function (t) {
   function normalToInsert(k) {
     hns.reset()
     hns.key(k)
-    t.equal(hns.insert, 1, 'when in normal mode, [' + k + '] switches to insert mode')
+    t.equal(hns.insert, 1, 'when in normal mode,' + hns.keyed + 'switches to insert mode')
   }
 
   hns.reset()
   hns.rlv.forceInsert(true)
 
-  var k = 'i'
-  hns.key(k)
-  t.equal(hns.insert, 0, 'when in insert mode, [' + k + '] not switches to insert mode')
+  hns.key('i')
+  t.equal(hns.insert, 0, 'when in insert mode,' + hns.keyed + 'not switches to insert mode')
 
   normalToInsert('i')
   t.equal(hns.rli.moveCursor.length, 0, 'does not move cursor')
