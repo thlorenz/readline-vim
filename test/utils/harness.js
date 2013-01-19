@@ -37,9 +37,12 @@ module.exports = function createHarness () {
   function reset() {
     hns.rli = createRli()
     hns.rlv = readlineVim(hns.rli)
+
     hns.rlv.events.removeAllListeners()
     hns.rlv.events.on('normal', function () { hns.normal++ })
     hns.rlv.events.on('insert', function () { hns.insert++ })
+
+    hns.rlv.forceNormal()
     hns.resetModes()
   }
   reset()
