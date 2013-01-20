@@ -19,6 +19,8 @@ var self = module.exports = function override_ttyWrite(rli) {
 
   // use set timeout instead of interval, to allow threshold to be changed
   function popBufferDuringInsert() {
+    if (normal) return;
+
     var s = buf.pop();
     if (!s) return;
     original_ttyWrite.call(rli, null, { name: s });
@@ -156,6 +158,6 @@ var self = module.exports = function override_ttyWrite(rli) {
   };
 };
 
-/*if (typeof $repl !== 'undefined') { 
+if (typeof $repl !== 'undefined') { 
   $repl.vim = module.exports($repl.rli);
-}*/
+}
