@@ -23,7 +23,9 @@
   "readmeFilename": "README.md",
   "gitHead": "26f68bc9dc257f5f511165d0949dc97a73b7625d",
   "devDependencies": {
-    "trap": "git://github.com/thlorenz/trap.git#ok"
+    "trap": "git://github.com/thlorenz/trap.git#ok",
+    "proxyquire": "~0.4.0",
+    "sinon": "~1.5.2"
   },
   "dependencies": {
     "tap": "~0.3.3"

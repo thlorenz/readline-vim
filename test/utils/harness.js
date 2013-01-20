@@ -2,9 +2,9 @@
 /*jshint asi: true*/
 
 var createRli = require('../fakes/readline')
-var readlineVim = require('../..')
 
-module.exports = function createHarness () { 
+module.exports = function createHarness (readlineVim_) { 
+  var readlineVim = readlineVim_ || require('../..')
   var hns = {
       rli        : undefined 
     , rlv        : undefined 

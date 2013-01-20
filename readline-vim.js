@@ -5,13 +5,26 @@ var EventEmitter = require('events').EventEmitter
 // TODO:
 var original_ttyWrite_global;
 
-module.exports = function override_ttyWrite(rli) {
+function isEsc(s) {
+  return s.trim().slice(0, 3).toLowerCase()=== 'esc';
+}
+
+var self = module.exports = function override_ttyWrite(rli) {
   var original_ttyWrite = original_ttyWrite_global || rli._ttyWrite
     , normal = false
     , buf = []
     , emitter = new EventEmitter()
     , emit = emitter.emit.bind(emitter)
     , map = createMap();
+
+  // use set timeout instead of interval, to allow threshold to be changed
+  function popBufferDuringInsert() {
+    var s = buf.pop();
+    if (!s) return;
+    original_ttyWrite.call(rli, null, { name: s });
+    setTimeout(popBufferDuringInsert, self.threshold);
+  }
+  setTimeout(popBufferDuringInsert, self.threshold);
 
   // TODO:
   original_ttyWrite_global = original_ttyWrite;
@@ -37,7 +50,16 @@ module.exports = function override_ttyWrite(rli) {
     if (key.name == 'escape') return normalMode();
     if (key.name == '[' && key.ctrl) return normalMode();
 
-    if (!normal) return original_ttyWrite.apply(rli, arguments);
+    if (!normal) { 
+
+      var m = map.matchInsert(key.name, buf);
+      if (!m) return original_ttyWrite.apply(rli, arguments);
+
+      if (m === true) return buf.push(key.name);
+
+      if (isEsc(m)) return normalMode();
+      // TODO: otherwise simulate the keypress that the sequence maps to
+    }
 
     function deleteLine() {
       self._deleteLineLeft();
@@ -130,9 +152,10 @@ module.exports = function override_ttyWrite(rli) {
     , forceNormal :  forceNormal
     , forceInsert :  forceInsert
     , map         :  map
+    , threshold   :  200
   };
 };
 
-if (typeof $repl !== 'undefined') { 
+/*if (typeof $repl !== 'undefined') { 
   $repl.vim = module.exports($repl.rli);
-}
+}*/
