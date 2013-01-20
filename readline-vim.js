@@ -1,12 +1,20 @@
 'use strict';
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events').EventEmitter
+  , createMap = require('./lib/map');
+
+// TODO:
+var original_ttyWrite_global;
 
 module.exports = function override_ttyWrite(rli) {
-  var original_ttyWrite = rli._ttyWrite
+  var original_ttyWrite = original_ttyWrite_global || rli._ttyWrite
     , normal = false
     , buf = []
     , emitter = new EventEmitter()
-    , emit = emitter.emit.bind(emitter);
+    , emit = emitter.emit.bind(emitter)
+    , map = createMap();
+
+  // TODO:
+  original_ttyWrite_global = original_ttyWrite;
 
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
@@ -121,5 +129,10 @@ module.exports = function override_ttyWrite(rli) {
       events      :  emitter
     , forceNormal :  forceNormal
     , forceInsert :  forceInsert
+    , map         :  map
   };
 };
+
+if (typeof $repl !== 'undefined') { 
+  $repl.vim = module.exports($repl.rli);
+}
