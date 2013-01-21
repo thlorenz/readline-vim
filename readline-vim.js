@@ -50,7 +50,6 @@ var override = module.exports = function override_ttyWrite(rli) {
   }
 
   function clearSequence() {
-    logl('clearing seq: ' + seq.keys);
     while(seq.keys.pop());
   }
 
@@ -78,6 +77,8 @@ var override = module.exports = function override_ttyWrite(rli) {
 
   function handleInsertModeInput(code, key) {
 
+    logl('code: ' + code);
+    log('key: '); logl(key);
     // normal mode via escape or ctrl-[
     if (key.name == 'escape') return normalMode();
     if (key.name == '[' && key.ctrl) return normalMode();

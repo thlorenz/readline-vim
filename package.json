@@ -28,6 +28,7 @@
     "sinon": "~1.5.2"
   },
   "dependencies": {
-    "tap": "~0.3.3"
+    "tap": "~0.3.3",
+    "stringify-key": "~0.1.1"
   }
 }

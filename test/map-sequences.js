@@ -79,10 +79,9 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
       t.equal(ttyw.length, 2, 'outputs two chars')
       t.equal(ttyw.shift().key.name, 'l', '[l]')
       t.equal(ttyw.shift().key.name, 'k', '[k]')
+      t.equal(hns.rli.deleteLeft, 0, 'deletes nothing')
       t.equal(hns.normal, 0, 'does not switch to normal mode')
       t.end()
     }
   })
 })
-
-
