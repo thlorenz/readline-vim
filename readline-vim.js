@@ -76,7 +76,7 @@ var override = module.exports = function override_ttyWrite(rli) {
     return true;
   }
 
-  function handleInsertModeInput(key) {
+  function handleInsertModeInput(code, key) {
 
     // normal mode via escape or ctrl-[
     if (key.name == 'escape') return normalMode();
@@ -106,7 +106,7 @@ var override = module.exports = function override_ttyWrite(rli) {
     var self = this;
     key = key || {};
 
-    if (!normal) return handleInsertModeInput();
+    if (!normal) return handleInsertModeInput(code, key);
 
     function deleteLine() {
       self._deleteLineLeft();

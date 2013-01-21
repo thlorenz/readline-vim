@@ -28,8 +28,8 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
 
   function localSetup() {
     setup()
-    matchInsert.withArgs('l', []).returns(true)
-    matchInsert.withArgs('k', ['l']).returns('escape')
+    matchInsert.withArgs(['l']).returns(true)
+    matchInsert.withArgs(['l', 'k']).returns('escape')
 
     hns.rlv.forceInsert()
   }
@@ -40,8 +40,12 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
     hns.key('l')
     hns.key('k')
 
-    t.equal(hns.rli.ttyWrite.length, 0, 'outputs nothing')
-    t.equal(hns.normal, 1, 'switches to normal mode once')
+    var ttyw = hns.rli.ttyWrite
+
+    t.equal(ttyw.length, 1, 'outputs one char')
+    t.equal(ttyw[0].key.name, 'l', '[l]')
+    t.equal(hns.rli.deleteLeft, 1, 'then deletes it')
+    t.equal(hns.normal, 1, 'and switches to normal mode once')
     t.end()
   })
 
@@ -56,9 +60,9 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
 
       var ttyw = hns.rli.ttyWrite;
 
-      t.equal(ttyw.length, 2, 'outputs twice')
-      t.equal(ttyw.shift().key.name, 'l', 'l')
-      t.equal(ttyw.shift().key.name, 'k', 'k')
+      t.equal(ttyw.length, 2, 'outputs two chars')
+      t.equal(ttyw.shift().key.name, 'l', '[l]')
+      t.equal(ttyw.shift().key.name, 'k', '[k]')
       t.equal(hns.normal, 0, 'does not switch to normal mode')
       t.end()
     }

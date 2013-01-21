@@ -4,7 +4,7 @@
 module.exports = function () {
   var self =  {
 
-      _ttyWrite        :  function (code, key) { this.ttyWrite.push({ code :  code, key :  key }) }
+      _ttyWrite        :  function (code, key) { this.ttyWrite.push({ code : code, key :  key }) }
     , _moveCursor      :  function (arg) { this.moveCursor.push(arg) }
 
     , _wordLeft        :  function () { this.wordLeft++ }
