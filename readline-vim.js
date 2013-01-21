@@ -1,66 +1,108 @@
 'use strict';
-var EventEmitter = require('events').EventEmitter
-  , createMap = require('./lib/map');
-
-// TODO:
-var original_ttyWrite_global;
+var EventEmitter =  require('events').EventEmitter
+  , createMap    =  require('./lib/map')
+  , utl          =  require('./lib/utl')
+  , log          =  utl.log
+  , logl         =  utl.logl
+  ;
 
 function isEsc(s) {
   return s.trim().slice(0, 3).toLowerCase()=== 'esc';
 }
 
-var self = module.exports = function override_ttyWrite(rli) {
-  var original_ttyWrite = original_ttyWrite_global || rli._ttyWrite
+var override = module.exports = function override_ttyWrite(rli) {
+  var original_ttyWrite = rli._ttyWrite
     , normal = false
     , buf = []
+    , seq = { keys: [], last: undefined } 
     , emitter = new EventEmitter()
     , emit = emitter.emit.bind(emitter)
     , map = createMap();
 
-  // use set timeout instead of interval, to allow threshold to be changed
-  function popBufferDuringInsert() {
+  // exposes properties and functions of our vimified readline
+  var vim = { threshold: 2000 };
+
+  vim.__defineGetter__('events', function () { return emitter; });
+  vim.__defineGetter__('map', function () { return map; });
+
+  vim.forceNormal = function(silent) {
+    normal = true;
+    if (!silent) emit('normal');
+  };
+
+  vim.forceInsert = function(silent) {
+    normal = false;
+    if (!silent) emit('insert');
+  };
+
+  function normalMode() {
     if (normal) return;
-
-    var s = buf.pop();
-    if (!s) return;
-    original_ttyWrite.call(rli, null, { name: s });
-    setTimeout(popBufferDuringInsert, self.threshold);
+    rli._moveCursor(-1);
+    normal = true;
+    clearSequence();
+    emit('normal');
   }
-  setTimeout(popBufferDuringInsert, self.threshold);
 
-  // TODO:
-  original_ttyWrite_global = original_ttyWrite;
+  function insertMode() {
+    normal = false;
+    clearSequence();
+    emit('insert');
+  }
 
+  function clearSequence() {
+    logl('clearing seq: ' + seq.keys);
+    while(seq.keys.pop());
+  }
+
+  function matchSequence(mapped) {
+    var fastEnough = (new Date() - seq.last) <= vim.threshold;
+
+    // delete sequence chars currently printed (exclude things like space)
+    fastEnough && seq.keys.slice(-1)
+      .filter(function (x) { return x.length === 1; })
+      .forEach(rli._deleteLeft.bind(rli));
+
+    clearSequence();
+
+    if (!fastEnough) return false;
+
+    if(isEsc(mapped)) { 
+      normalMode(); 
+      return true;
+    }
+
+    // TODO: otherwise simulate the keypress that the sequence maps to
+
+    return true;
+  }
+  
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
     var self = this;
     key = key || {};
-
-    function normalMode() {
-      if (normal) return;
-      self._moveCursor(-1);
-      normal = true;
-      emit('normal');
-    }
-
-    function insertMode() {
-      normal = false;
-      emit('insert');
-    }
 
     // normal mode via escape or ctrl-[
     if (key.name == 'escape') return normalMode();
     if (key.name == '[' && key.ctrl) return normalMode();
 
     if (!normal) { 
+      seq.keys.push(key.name);
+      // remember when last key was entered so we can decide if it counts as sequence or not
+      var m = map.matchInsert(seq.keys);
+      logl('matched ' + m);
+      if (!m) {
+        // in case we buffered some keys hoping for a complete sequence, loose hope and 
+        clearSequence();
+      } else if (m === true) {
+        // we hope for a future match
+      } else if (matchSequence(m)) { 
+        // we matched our sequence and therefore will not print the keys
+        return;
+      }
+      
+      seq.last = new Date();
 
-      var m = map.matchInsert(key.name, buf);
-      if (!m) return original_ttyWrite.apply(rli, arguments);
-
-      if (m === true) return buf.push(key.name);
-
-      if (isEsc(m)) return normalMode();
-      // TODO: otherwise simulate the keypress that the sequence maps to
+      return original_ttyWrite.apply(rli, arguments);
     }
 
     function deleteLine() {
@@ -139,25 +181,12 @@ var self = module.exports = function override_ttyWrite(rli) {
     }
   };
 
-  function forceNormal(silent) {
-    normal = true;
-    if (!silent) emit('normal');
-  }
-
-  function forceInsert(silent) {
-    normal = false;
-    if (!silent) emit('insert');
-  }
-
-  return { 
-      events      :  emitter
-    , forceNormal :  forceNormal
-    , forceInsert :  forceInsert
-    , map         :  map
-    , threshold   :  200
-  };
+  return vim;
 };
 
-if (typeof $repl !== 'undefined') { 
-  $repl.vim = module.exports($repl.rli);
-}
+if (module.parent) return;
+
+var rli = utl.readline();
+var vim = override(rli);
+var map = vim.map;
+map.insert('jk', 'esc');
