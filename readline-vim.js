@@ -20,7 +20,7 @@ var override = module.exports = function override_ttyWrite(rli) {
     , map = createMap();
 
   // exposes properties and functions of our vimified readline
-  var vim = { threshold: 2000 };
+  var vim = { threshold: 200 };
 
   vim.__defineGetter__('events', function () { return emitter; });
   vim.__defineGetter__('map', function () { return map; });
