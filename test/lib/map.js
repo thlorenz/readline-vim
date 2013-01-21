@@ -12,8 +12,8 @@ test('\nsequences in insert mode', function (t) {
     map.insert('jk', 'escape')
     t.equal(map.mappings.insert.sequences.j.k, 'escape', 'it is added to the mappings under insert.sequences.j.k')
 
-    t.equal(map.matchInsert(['j', 'k']), 'escape', 'matching insert [kj] returns escape')
-    t.equal(map.matchInsert(['l', 'k']), null, 'matching insert [kl] returns null')
+    t.equal(map.matchInsert(['j', 'k']), 'escape', 'matching insert [jk] returns escape')
+    t.equal(map.matchInsert(['l', 'k']), null, 'matching insert [lk] returns null')
     t.equal(map.matchInsert(['k', 'j']), null, 'matching insert [kj] returns null')
     t.equal(map.matchInsert(['j']), true, 'matching insert [j] returns true to indicate possible future match')
 
