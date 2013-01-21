@@ -12,10 +12,10 @@ test('\nsequences in insert mode', function (t) {
     map.insert('jk', 'escape')
     t.equal(map.mappings.insert.sequences.j.k, 'escape', 'it is added to the mappings under insert.sequences.j.k')
 
-    t.equal(map.matchInsert('k', ['j']), 'escape', 'matching insert [kj] returns escape')
-    t.equal(map.matchInsert('k', ['l']), null, 'matching insert [kl] returns null')
-    t.equal(map.matchInsert('j', ['k']), null, 'matching insert [kj] returns null')
-    t.equal(map.matchInsert('j', []), true, 'matching insert [j] returns true to indicate possible future match')
+    t.equal(map.matchInsert(['j', 'k']), 'escape', 'matching insert [kj] returns escape')
+    t.equal(map.matchInsert(['l', 'k']), null, 'matching insert [kl] returns null')
+    t.equal(map.matchInsert(['k', 'j']), null, 'matching insert [kj] returns null')
+    t.equal(map.matchInsert(['j']), true, 'matching insert [j] returns true to indicate possible future match')
 
     t.end()
   })
@@ -26,8 +26,8 @@ test('\nsequences in insert mode', function (t) {
     map.insert('mug', 'escape')
     t.equal(map.mappings.insert.sequences.m.u.g, 'escape', 'it is added to the mappings under insert.sequences.m.u.g')
 
-    t.equal(map.matchInsert('g', ['m', 'u']), 'escape', 'matching insert [mug] returns escape')
-    t.equal(map.matchInsert('u', ['m']), true, 'matching insert [mu] returns true to indicate possible future match')
+    t.equal(map.matchInsert(['m', 'u', 'g']), 'escape', 'matching insert [mug] returns escape')
+    t.equal(map.matchInsert(['m', 'u']), true, 'matching insert [mu] returns true to indicate possible future match')
 
     t.end()
   })
