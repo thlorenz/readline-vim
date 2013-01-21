@@ -71,9 +71,34 @@ var override = module.exports = function override_ttyWrite(rli) {
       return true;
     }
 
-    // TODO: otherwise simulate the keypress that the sequence maps to
+    // todo: otherwise simulate the keypress that the sequence maps to
 
     return true;
+  }
+
+  function handleInsertModeInput(key) {
+
+    // normal mode via escape or ctrl-[
+    if (key.name == 'escape') return normalMode();
+    if (key.name == '[' && key.ctrl) return normalMode();
+
+    seq.keys.push(key.name);
+    // remember when last key was entered so we can decide if it counts as sequence or not
+    var m = map.matchInsert(seq.keys);
+    logl('matched ' + m);
+    if (!m) {
+      // in case we buffered some keys hoping for a complete sequence, loose hope now
+      clearSequence();
+    } else if (m === true) {
+      // we hope for a future match
+    } else if (matchSequence(m)) { 
+      // we matched our sequence and therefore will not print the keys
+      return;
+    }
+    
+    // do this unless we found a complete match and processed it
+    seq.last = new Date();
+    return original_ttyWrite.apply(rli, arguments);
   }
   
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
@@ -81,29 +106,7 @@ var override = module.exports = function override_ttyWrite(rli) {
     var self = this;
     key = key || {};
 
-    // normal mode via escape or ctrl-[
-    if (key.name == 'escape') return normalMode();
-    if (key.name == '[' && key.ctrl) return normalMode();
-
-    if (!normal) { 
-      seq.keys.push(key.name);
-      // remember when last key was entered so we can decide if it counts as sequence or not
-      var m = map.matchInsert(seq.keys);
-      logl('matched ' + m);
-      if (!m) {
-        // in case we buffered some keys hoping for a complete sequence, loose hope and 
-        clearSequence();
-      } else if (m === true) {
-        // we hope for a future match
-      } else if (matchSequence(m)) { 
-        // we matched our sequence and therefore will not print the keys
-        return;
-      }
-      
-      seq.last = new Date();
-
-      return original_ttyWrite.apply(rli, arguments);
-    }
+    if (!normal) return handleInsertModeInput();
 
     function deleteLine() {
       self._deleteLineLeft();
