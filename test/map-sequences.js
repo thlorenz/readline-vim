@@ -49,6 +49,22 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
     t.end()
   })
 
+  t.test('\n# when I type [lj] for which no mapping is registered quickly', function (t) {
+    localSetup()
+
+    hns.key('l')
+    hns.key('j')
+
+    var ttyw = hns.rli.ttyWrite
+
+    t.equal(ttyw.length, 2, 'outputs two chars')
+    t.equal(ttyw.shift().key.name, 'l', '[l]')
+    t.equal(ttyw.shift().key.name, 'j', '[j]')
+    t.equal(hns.rli.deleteLeft, 0, 'deletes nothing')
+    t.equal(hns.normal, 0, 'does not switch to normal mode')
+    t.end()
+  })
+
   t.test('\n# when I type [lk] slowly', function (t) {
     localSetup()
 
