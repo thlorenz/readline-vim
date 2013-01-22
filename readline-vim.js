@@ -31,21 +31,21 @@ var override = module.exports = function override_ttyWrite(rli) {
     if (!silent) emit('insert');
   };
 
-  vim.normalMode = function() {
+  function normalMode() {
     if (normal) return;
     rli._moveCursor(-1);
     normal = true;
     insert.clearSequence();
     emit('normal');
-  };
+  }
 
-  vim.insertMode = function() {
+  function insertMode() {
     normal = false;
     insert.clearSequence();
     emit('insert');
-  };
+  }
 
-  var insert = createInsert(rli, vim, original_ttyWrite);
+  var insert = createInsert(rli, vim, normalMode, original_ttyWrite);
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
     var self = this;
@@ -62,19 +62,19 @@ var override = module.exports = function override_ttyWrite(rli) {
     switch(key.name) {
       // insert mode via i
       case 'i':
-        if (key.shift) return this._moveCursor(-Infinity), vim.insertMode();
-        return vim.insertMode();
+        if (key.shift) return this._moveCursor(-Infinity), insertMode();
+        return insertMode();
       // insert mode via a
       case 'a':
-        if (key.shift) return this._moveCursor(Infinity), vim.insertMode();
-        return this._moveCursor(+1), vim.insertMode();
+        if (key.shift) return this._moveCursor(Infinity), insertMode();
+        return this._moveCursor(+1), insertMode();
         break;
         
       // change line via 'cc' or 'C'
       case 'c':
-        if (key.shift) return deleteLine(), vim.insertMode();
+        if (key.shift) return deleteLine(), insertMode();
         if (!prev) return buf.push('c');
-        if (prev == 'c') return deleteLine(), vim.insertMode();
+        if (prev == 'c') return deleteLine(), insertMode();
         break;
       // delete line via 'dd' or 'D'
       case 'd':
@@ -86,21 +86,21 @@ var override = module.exports = function override_ttyWrite(rli) {
       // movements
       case 'h':
         if (prev == 'd') return this._deleteLeft();
-        if (prev == 'c') return this._deleteLeft(), vim.insertMode();
+        if (prev == 'c') return this._deleteLeft(), insertMode();
         return this._moveCursor(-1);
       case 'l':
         if (prev == 'd') return this._deleteRight();
-        if (prev == 'c') return this._deleteRight(), vim.insertMode();
+        if (prev == 'c') return this._deleteRight(), insertMode();
         return this._moveCursor(+1);
       case 'b':
         if (prev == 'd') return this._deleteWordLeft();
-        if (prev == 'c') return this._deleteWordLeft(), vim.insertMode();
+        if (prev == 'c') return this._deleteWordLeft(), insertMode();
         return this._wordLeft();
       case 'w':
         if (prev == 'd') return this._deleteWordRight();
         if (prev == 'c') { 
           this._deleteWordRight();
-          return vim.insertMode();
+          return insertMode();
         }
         return this._wordRight();
 
@@ -118,7 +118,7 @@ var override = module.exports = function override_ttyWrite(rli) {
 
       // enter
       case 'enter':
-        return this._line(), vim.insertMode();
+        return this._line(), insertMode();
     }
 
     switch (code) {
