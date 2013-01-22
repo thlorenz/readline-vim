@@ -1,27 +1,23 @@
 'use strict';
 var EventEmitter =  require('events').EventEmitter
   , createMap    =  require('./lib/map')
+  , createInsert =  require('./lib/insert-mode')
   , utl          =  require('./lib/utl')
   , log          =  utl.log
   , logl         =  utl.logl
   ;
 
-function isEsc(s) {
-  return s.trim().slice(0, 3).toLowerCase()=== 'esc';
-}
-
 var override = module.exports = function override_ttyWrite(rli) {
-  var original_ttyWrite = rli._ttyWrite
-    , normal = false
-    , buf = []
-    , seq = { keys: [], last: undefined } 
-    , emitter = new EventEmitter()
-    , emit = emitter.emit.bind(emitter)
-    , map = createMap();
+  var original_ttyWrite =  rli._ttyWrite
+    , normal            =  false
+    , buf               =  []
+    , emitter           =  new EventEmitter()
+    , emit              =  emitter.emit.bind(emitter)
+    , map               =  createMap()
+    ;
 
   // exposes properties and functions of our vimified readline
   var vim = { threshold: 200 };
-
   vim.__defineGetter__('events', function () { return emitter; });
   vim.__defineGetter__('map', function () { return map; });
 
@@ -35,99 +31,27 @@ var override = module.exports = function override_ttyWrite(rli) {
     if (!silent) emit('insert');
   };
 
-  function normalMode() {
+  vim.normalMode = function() {
     if (normal) return;
     rli._moveCursor(-1);
     normal = true;
-    clearSequence();
+    insert.clearSequence();
     emit('normal');
-  }
+  };
 
-  function insertMode() {
+  vim.insertMode = function() {
     normal = false;
-    clearSequence();
+    insert.clearSequence();
     emit('insert');
-  }
+  };
 
-  function clearSequence() {
-    while(seq.keys.pop());
-  }
-
-  function matchSequence(mapped) {
-    var fastEnough = (new Date() - seq.last) <= vim.threshold;
-
-    // delete sequence chars currently printed (exclude things like space)
-    fastEnough && seq.keys.slice(-1)
-      .filter(function (x) { return x.length === 1; })
-      .forEach(rli._deleteLeft.bind(rli));
-
-    clearSequence();
-
-    if (!fastEnough) return false;
-
-    if(isEsc(mapped)) { 
-      normalMode(); 
-      return true;
-    }
-
-    // todo: otherwise simulate the keypress that the sequence maps to
-
-    return true;
-  }
-  
-  function matchInsertImmediate(mapped) {
-    return true;
-  }
-
-  function hasMeta(key) {
-    return key.ctrl || key.alt || key.meta;
-  }
-
-  // returns true if we are to write to terminal
-  function matchInsertSequence(key) {
-    seq.keys.push(key.name);
-    
-    // remember when last key was entered so we can decide if it counts as sequence or not
-    var m = map.matchInsert(seq.keys) 
-
-      // assume we'll match no complete sequence and therefore will want to print keyed char
-      , passThru = true;
-
-    logl('matched ' + m);
-    if (!m) {
-      // in case we buffered some keys hoping for a complete sequence, loose hope now
-      clearSequence();
-    } else if (m === true) {
-      // we hope for a future match
-    } else if (matchSequence(m)) { 
-      // we matched our sequence and therefore will not print the char
-      passThru = false;
-    }
-    
-    if (passThru) seq.last = new Date();
-    return passThru; 
-  }
-
-  function handleInsertModeInput(code, key) {
-    var passThru;
-
-    logl('code: ' + code);
-    log('key: '); logl(key);
-    // normal mode via escape or ctrl-[
-    if (key.name == 'escape') return normalMode();
-    if (key.name == '[' && key.ctrl) return normalMode();
-
-    passThru = hasMeta(key) ? matchInsertImmediate(key) : matchInsertSequence(key);
-
-    if (passThru) original_ttyWrite.apply(rli, arguments);
-  }
-  
+  var insert = createInsert(rli, vim, original_ttyWrite);
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
     var self = this;
     key = key || {};
 
-    if (!normal) return handleInsertModeInput(code, key);
+    if (!normal) return insert.handleInput(code, key);
 
     function deleteLine() {
       self._deleteLineLeft();
@@ -138,19 +62,19 @@ var override = module.exports = function override_ttyWrite(rli) {
     switch(key.name) {
       // insert mode via i
       case 'i':
-        if (key.shift) return this._moveCursor(-Infinity), insertMode();
-        return insertMode();
+        if (key.shift) return this._moveCursor(-Infinity), vim.insertMode();
+        return vim.insertMode();
       // insert mode via a
       case 'a':
-        if (key.shift) return this._moveCursor(Infinity), insertMode();
-        return this._moveCursor(+1), insertMode();
+        if (key.shift) return this._moveCursor(Infinity), vim.insertMode();
+        return this._moveCursor(+1), vim.insertMode();
         break;
         
       // change line via 'cc' or 'C'
       case 'c':
-        if (key.shift) return deleteLine(), insertMode();
+        if (key.shift) return deleteLine(), vim.insertMode();
         if (!prev) return buf.push('c');
-        if (prev == 'c') return deleteLine(), insertMode();
+        if (prev == 'c') return deleteLine(), vim.insertMode();
         break;
       // delete line via 'dd' or 'D'
       case 'd':
@@ -162,21 +86,21 @@ var override = module.exports = function override_ttyWrite(rli) {
       // movements
       case 'h':
         if (prev == 'd') return this._deleteLeft();
-        if (prev == 'c') return this._deleteLeft(), insertMode();
+        if (prev == 'c') return this._deleteLeft(), vim.insertMode();
         return this._moveCursor(-1);
       case 'l':
         if (prev == 'd') return this._deleteRight();
-        if (prev == 'c') return this._deleteRight(), insertMode();
+        if (prev == 'c') return this._deleteRight(), vim.insertMode();
         return this._moveCursor(+1);
       case 'b':
         if (prev == 'd') return this._deleteWordLeft();
-        if (prev == 'c') return this._deleteWordLeft(), insertMode();
+        if (prev == 'c') return this._deleteWordLeft(), vim.insertMode();
         return this._wordLeft();
       case 'w':
         if (prev == 'd') return this._deleteWordRight();
         if (prev == 'c') { 
           this._deleteWordRight();
-          return insertMode();
+          return vim.insertMode();
         }
         return this._wordRight();
 
@@ -194,7 +118,7 @@ var override = module.exports = function override_ttyWrite(rli) {
 
       // enter
       case 'enter':
-        return this._line(), insertMode();
+        return this._line(), vim.insertMode();
     }
 
     switch (code) {
