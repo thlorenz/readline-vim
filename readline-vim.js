@@ -74,18 +74,25 @@ var override = module.exports = function override_ttyWrite(rli) {
 
     return true;
   }
+  
+  function matchInsertImmediate(mapped) {
+    return true;
+  }
 
-  function handleInsertModeInput(code, key) {
+  function hasMeta(key) {
+    return key.ctrl || key.alt || key.meta;
+  }
 
-    logl('code: ' + code);
-    log('key: '); logl(key);
-    // normal mode via escape or ctrl-[
-    if (key.name == 'escape') return normalMode();
-    if (key.name == '[' && key.ctrl) return normalMode();
-
+  // returns true if we are to write to terminal
+  function matchInsertSequence(key) {
     seq.keys.push(key.name);
+    
     // remember when last key was entered so we can decide if it counts as sequence or not
-    var m = map.matchInsert(seq.keys);
+    var m = map.matchInsert(seq.keys) 
+
+      // assume we'll match no complete sequence and therefore will want to print keyed char
+      , passThru = true;
+
     logl('matched ' + m);
     if (!m) {
       // in case we buffered some keys hoping for a complete sequence, loose hope now
@@ -93,13 +100,26 @@ var override = module.exports = function override_ttyWrite(rli) {
     } else if (m === true) {
       // we hope for a future match
     } else if (matchSequence(m)) { 
-      // we matched our sequence and therefore will not print the keys
-      return;
+      // we matched our sequence and therefore will not print the char
+      passThru = false;
     }
     
-    // do this unless we found a complete match and processed it
-    seq.last = new Date();
-    return original_ttyWrite.apply(rli, arguments);
+    if (passThru) seq.last = new Date();
+    return passThru; 
+  }
+
+  function handleInsertModeInput(code, key) {
+    var passThru;
+
+    logl('code: ' + code);
+    log('key: '); logl(key);
+    // normal mode via escape or ctrl-[
+    if (key.name == 'escape') return normalMode();
+    if (key.name == '[' && key.ctrl) return normalMode();
+
+    passThru = hasMeta(key) ? matchInsertImmediate(key) : matchInsertSequence(key);
+
+    if (passThru) original_ttyWrite.apply(rli, arguments);
   }
   
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
