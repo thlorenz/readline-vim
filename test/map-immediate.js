@@ -22,52 +22,44 @@ function setup() {
   hns = createHarness(readlineVim)
 }
 
-test('\ngiven I mapped insert mode [ctrl-s] to [ctrl-p] and am in insert mode', function (t) {
-  function localSetup() {
+test('\ngiven I am in insert mode', function (t) {
+  function insertModeSetup() {
     setup()
-    var ctrlS = { name: 's', ctrl: true }
-    matchInsert.withArgs('ctrl-s').returns('ctrl-p')
     hns.rlv.forceInsert()
   }
-
-  localSetup()
-
-  hns.key('ctrl-s')
- 
-  console.log('written', hns.written);
-  // t.equal(hns.written.pop().key, { name: 'p', ctrl: true }, 'pressing ctrl-s emits ctrl-p')
-  //t.equal(map.matchInsert({ name: 's', ctrl: true, shift: true }), undefined, 'matching [shift-ctrl-i] returns undefined')
   
-  t.end()
+  t.test('\nand I mapped insert mode [ctrl-s] to [ctrl-p]', function (t) {
+    insertModeSetup()
+
+    matchInsert.withArgs('ctrl-s').returns('ctrl-p')
+
+    hns.key('ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing ctrl-s emits ctrl-p')
+    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+
+    hns.key('ctrl-k')
+    t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
+    
+    t.end()
+  })
+
+  t.test('\nand I mapped insert mode [shift-ctrl-s] to [ctrl-p]', function (t) {
+    insertModeSetup()
+
+    matchInsert.withArgs('shift-ctrl-s').returns('ctrl-p')
+
+    hns.key('shift-ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing shift-ctrl-s emits ctrl-p')
+    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+
+    hns.key('ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-s', 'pressing ctrl-s emits ctrl-s')
+    
+    t.end()
+  })
 })
 
 /*
-test('\nkey combinations in insert mode', function (t) {
-   t.test('\n# given I mapped [ctrl-i] to escape', function (t) {
-    var map = createMap()
-
-    map.insert('ctrl-i', 'escape')
-
-    t.equal(map.mappings.insert.immediates['ctrl-i'], 'escape', 'it is added to the mappings under insert.immediates.ctrl-i')
-    t.equal(map.matchInsert({ name: 'i', ctrl: true }), 'escape', 'matching [ctrl-i] returns escape')
-    t.equal(map.matchInsert({ name: 'i', ctrl: true, shift: true }), undefined, 'matching [shift-ctrl-i] returns undefined')
-
-    t.end()
-   })
-
-   t.test('\n# given I mapped [shift-ctrl-i] to ctrl-p (although that does not currently work due to readline limiations)', function (t) {
-    var map = createMap()
-
-    map.insert('shift-ctrl-i', 'ctrl-p')
-
-    t.equal(map.mappings.insert.immediates['shift-ctrl-i'], 'ctrl-p', 'it is added to the mappings under insert.immediates.shift-ctrl-i')
-    t.equal(map.matchInsert({ name: 'i', ctrl: true, shift: true }), 'ctrl-p', 'matching [shift-ctrl-i] returns ctrl-p')
-    t.equal(map.matchInsert({ name: 'j', ctrl: true, shift: true }), undefined, 'matching [shift-ctrl-j] returns undefined')
-    t.equal(map.matchInsert({ name: 'i', ctrl: false, shift: true }), undefined, 'matching [ctrl-i] returns undefined')
-
-    t.end()
-   })
-})
 
 test('\nkey combinations in normal mode', function (t) {
    t.test('\n# given I mapped [ctrl-i] to escape', function (t) {

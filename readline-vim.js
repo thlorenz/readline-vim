@@ -144,3 +144,4 @@ var rli = utl.readline();
 var vim = override(rli);
 var map = vim.map;
 map.insert('jk', 'esc');
+map.insert('ctrl-k', 'ctrl-p');

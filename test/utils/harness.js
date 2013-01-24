@@ -3,6 +3,7 @@
 
 var createRli = require('../fakes/readline')
   , parseKey = require('parse-key')
+  , stringifyKey = require('stringify-key')
 
 
 module.exports = function createHarness (readlineVim_) { 
@@ -21,6 +22,7 @@ module.exports = function createHarness (readlineVim_) {
     , coded      : undefined
     , seqed      : undefined
     , written    : []
+    , writtenStr : []
   };
 
   function key(k) {
@@ -65,13 +67,19 @@ module.exports = function createHarness (readlineVim_) {
     hns.rlv.events.on('insert', function () { hns.insert++ })
 
     readlineVim.base_ttyWrite
-    hns.rlv.events.on('write', function (code, key) { hns.written.push({ code: code, key: key }) })
+    hns.rlv.events.on('write', function (code, key) { 
+      hns.written.push({ code: code, key: key }) 
+      try { 
+        hns.writtenStr.push(stringifyKey(key)) 
+      } catch (e) { console.error(e) }
+    })
 
     hns.rlv.forceNormal()
     hns.resetModes()
 
     hns.keyed = hns.coded = hns.seqed = hns.pressed = undefined
-    hns.written = []
+    hns.written = [] 
+    hns.writtenStr = []
     
     return hns;
   }
