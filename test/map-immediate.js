@@ -59,69 +59,70 @@ test('\ngiven I am in insert mode', function (t) {
   })
 })
 
-/*test('\ngiven I am in normal mode', function (t) {
+test('\ngiven I am in normal mode', function (t) {
   function normalModeSetup() {
     setup()
     hns.rlv.forceNormal()
   }
   
-  t.test('\nand I mapped normal mode [ctrl-s] to [ctrl-p]', function (t) {
+  t.test('\nand I mapped normal mode [s] to k', function (t) {
     normalModeSetup()
 
-    matchNormal.withArgs('ctrl-s').returns('ctrl-p')
+    matchNormal.withArgs('s').returns('k')
 
-    hns.key('ctrl-s')
-    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing ctrl-s emits ctrl-p')
-    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+    hns.key('s')
+    t.equal(hns.rli.historyPrev, 1, '[s] goes back in history')
 
-    hns.key('ctrl-k')
-    t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
+    hns.rli.reset()
+    hns.key('l')
+    t.equal(hns.rli.historyPrev, 0, '[l] does not go back in history')
     
     t.end()
   })
 
-  t.test('\nand I mapped normal mode [shift-ctrl-s] to [ctrl-p]', function (t) {
+  t.test('\nand I mapped normal mode [ctrl-s] to k', function (t) {
+
     normalModeSetup()
 
-    matchNormal.withArgs('shift-ctrl-s').returns('ctrl-p')
+    matchNormal.withArgs('ctrl-s').returns('k')
+
+    hns.key('ctrl-s')
+    t.equal(hns.rli.historyPrev, 1, '[ctrl-s] goes back in history')
+
+    hns.rli.reset()
+    hns.key('ctrl-k')
+    t.equal(hns.rli.historyPrev, 0, '[ctrl-k] does not go back in history')
+    
+    t.end()
+  })
+
+  t.test('\nand I mapped normal mode [shift-s] to k', function (t) {
+    normalModeSetup()
+
+    matchNormal.withArgs('shift-s').returns('k')
+
+    hns.key('shift-s')
+    t.equal(hns.rli.historyPrev, 1, '[shift-s] goes back in history')
+
+    hns.rli.reset()
+    hns.key('ctrl-s')
+    t.equal(hns.rli.historyPrev, 0, '[ctrl-s] does not go back in history')
+    
+    t.end()
+  })
+
+  t.test('\nand I mapped normal mode [shift-ctrl-s] to j', function (t) {
+    normalModeSetup()
+
+    matchNormal.withArgs('shift-ctrl-s').returns('j')
 
     hns.key('shift-ctrl-s')
-    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing shift-ctrl-s emits ctrl-p')
-    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+    t.equal(hns.rli.historyNext, 1, '[shift-ctrl-s] goes forward in history')
 
+    hns.rli.reset()
     hns.key('ctrl-s')
-    t.equal(hns.writtenStr.pop(), 'ctrl-s', 'pressing ctrl-s emits ctrl-s')
+    t.equal(hns.rli.historyNext, 0, '[ctrl-s] does not go forward in history')
     
     t.end()
   })
-})*/
-
-/*
-
-test('\nkey combinations in normal mode', function (t) {
-   t.test('\n# given I mapped [ctrl-i] to escape', function (t) {
-    var map = createMap()
-
-    map.normal('ctrl-i', 'escape')
-
-    t.equal(map.mappings.normal.immediates['ctrl-i'], 'escape', 'it is added to the mappings under normal.immediates.ctrl-i')
-    t.equal(map.matchNormal({ name: 'i', ctrl: true }), 'escape', 'matching [ctrl-i] returns escape')
-    t.equal(map.matchNormal({ name: 'i', ctrl: true, shift: true }), undefined, 'matching [shift-ctrl-i] returns undefined')
-
-    t.end()
-   })
-
-   t.test('\n# given I mapped [shift-ctrl-i] to ctrl-p (although that does not currently work due to readline limiations)', function (t) {
-    var map = createMap()
-
-    map.normal('shift-ctrl-i', 'ctrl-p')
-
-    t.equal(map.mappings.normal.immediates['shift-ctrl-i'], 'ctrl-p', 'it is added to the mappings under normal.immediates.shift-ctrl-i')
-    t.equal(map.matchNormal({ name: 'i', ctrl: true, shift: true }), 'ctrl-p', 'matching [shift-ctrl-i] returns ctrl-p')
-    t.equal(map.matchNormal({ name: 'j', ctrl: true, shift: true }), undefined, 'matching [shift-ctrl-j] returns undefined')
-    t.equal(map.matchNormal({ name: 'i', ctrl: false, shift: true }), undefined, 'matching [ctrl-i] returns undefined')
-
-    t.end()
-   })
 })
-*/
