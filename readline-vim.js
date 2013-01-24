@@ -2,6 +2,7 @@
 var EventEmitter =  require('events').EventEmitter
   , createMap    =  require('./lib/map')
   , createInsert =  require('./lib/insert-mode')
+  , createNormal =  require('./lib/normal-mode')
   , utl          =  require('./lib/utl')
   , log          =  utl.log
   , logl         =  utl.logl
@@ -9,8 +10,7 @@ var EventEmitter =  require('events').EventEmitter
 
 var override = module.exports = function override_ttyWrite(rli) {
   var original_ttyWrite =  rli._ttyWrite
-    , normal            =  false
-    , buf               =  []
+    , isnormal          =  false
     , emitter           =  new EventEmitter()
     , emit              =  emitter.emit.bind(emitter)
     , map               =  createMap()
@@ -22,25 +22,25 @@ var override = module.exports = function override_ttyWrite(rli) {
   vim.__defineGetter__('map', function () { return map; });
 
   vim.forceNormal = function(silent) {
-    normal = true;
+    isnormal = true;
     if (!silent) emit('normal');
   };
 
   vim.forceInsert = function(silent) {
-    normal = false;
+    isnormal = false;
     if (!silent) emit('insert');
   };
 
   function normalMode() {
-    if (normal) return;
+    if (isnormal) return;
     rli._moveCursor(-1);
-    normal = true;
+    isnormal = true;
     insert.clearSequence();
     emit('normal');
   }
 
   function insertMode() {
-    normal = false;
+    isnormal = false;
     insert.clearSequence();
     emit('insert');
   }
@@ -51,88 +51,16 @@ var override = module.exports = function override_ttyWrite(rli) {
   }
 
   var insert = createInsert(rli, vim, normalMode, notifyingWrite);
+  var normal = createNormal(rli, vim, insertMode, notifyingWrite);
 
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
-    var self = this;
     key = key || {};
 
-    if (!normal) return insert.handleInput(code, key);
-
-    function deleteLine() {
-      self._deleteLineLeft();
-      self._deleteLineRight();
-    }
-
-    var prev = buf.pop();
-    switch(key.name) {
-      // insert mode via i
-      case 'i':
-        if (key.shift) return this._moveCursor(-Infinity), insertMode();
-        return insertMode();
-      // insert mode via a
-      case 'a':
-        if (key.shift) return this._moveCursor(Infinity), insertMode();
-        return this._moveCursor(+1), insertMode();
-        break;
-        
-      // change line via 'cc' or 'C'
-      case 'c':
-        if (key.shift) return deleteLine(), insertMode();
-        if (!prev) return buf.push('c');
-        if (prev == 'c') return deleteLine(), insertMode();
-        break;
-      // delete line via 'dd' or 'D'
-      case 'd':
-        if (key.shift) return deleteLine();
-        if (!prev) return buf.push('d');
-        if (prev == 'd') return deleteLine();
-        break;
-
-      // movements
-      case 'h':
-        if (prev == 'd') return this._deleteLeft();
-        if (prev == 'c') return this._deleteLeft(), insertMode();
-        return this._moveCursor(-1);
-      case 'l':
-        if (prev == 'd') return this._deleteRight();
-        if (prev == 'c') return this._deleteRight(), insertMode();
-        return this._moveCursor(+1);
-      case 'b':
-        if (prev == 'd') return this._deleteWordLeft();
-        if (prev == 'c') return this._deleteWordLeft(), insertMode();
-        return this._wordLeft();
-      case 'w':
-        if (prev == 'd') return this._deleteWordRight();
-        if (prev == 'c') { 
-          this._deleteWordRight();
-          return insertMode();
-        }
-        return this._wordRight();
-
-      // deletion
-      case 'x':
-        return key.shift 
-          ? this._deleteLeft() 
-          : this._deleteRight(); 
-
-      // history
-      case 'k':
-        return this._historyPrev();
-      case 'j':
-        return this._historyNext();
-
-      // enter
-      case 'enter':
-        return this._line(), insertMode();
-    }
-
-    switch (code) {
-      case '0':
-        return this._moveCursor(-Infinity);
-      case '$': 
-        return this._moveCursor(Infinity);
-    }
+    if (!isnormal) return insert.handleInput(code, key);
+    
+    // check for maps first
+    if (!normal.handleInput(code, key)) return;
   };
 
   return vim;

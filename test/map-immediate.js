@@ -59,6 +59,43 @@ test('\ngiven I am in insert mode', function (t) {
   })
 })
 
+/*test('\ngiven I am in normal mode', function (t) {
+  function normalModeSetup() {
+    setup()
+    hns.rlv.forceNormal()
+  }
+  
+  t.test('\nand I mapped normal mode [ctrl-s] to [ctrl-p]', function (t) {
+    normalModeSetup()
+
+    matchNormal.withArgs('ctrl-s').returns('ctrl-p')
+
+    hns.key('ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing ctrl-s emits ctrl-p')
+    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+
+    hns.key('ctrl-k')
+    t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
+    
+    t.end()
+  })
+
+  t.test('\nand I mapped normal mode [shift-ctrl-s] to [ctrl-p]', function (t) {
+    normalModeSetup()
+
+    matchNormal.withArgs('shift-ctrl-s').returns('ctrl-p')
+
+    hns.key('shift-ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-p', 'pressing shift-ctrl-s emits ctrl-p')
+    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything else')
+
+    hns.key('ctrl-s')
+    t.equal(hns.writtenStr.pop(), 'ctrl-s', 'pressing ctrl-s emits ctrl-s')
+    
+    t.end()
+  })
+})*/
+
 /*
 
 test('\nkey combinations in normal mode', function (t) {
