@@ -45,7 +45,13 @@ var override = module.exports = function override_ttyWrite(rli) {
     emit('insert');
   }
 
-  var insert = createInsert(rli, vim, normalMode, original_ttyWrite);
+  function notifyingWrite(code, key) {
+    emit('write',code, key);
+    original_ttyWrite.apply(rli, arguments);
+  }
+
+  var insert = createInsert(rli, vim, normalMode, notifyingWrite);
+
   // __ttyWrite has been here since 0.2, so I think we are safe to assume it will be used in the future
   rli._ttyWrite = function(code, key) {
     var self = this;

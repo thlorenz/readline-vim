@@ -2,6 +2,8 @@
 /*jshint asi: true*/
 
 var createRli = require('../fakes/readline')
+  , parseKey = require('parse-key')
+
 
 module.exports = function createHarness (readlineVim_) { 
   var readlineVim = readlineVim_ || require('../..')
@@ -18,15 +20,18 @@ module.exports = function createHarness (readlineVim_) {
     , keyed      : undefined
     , coded      : undefined
     , seqed      : undefined
+    , written    : []
   };
 
   function key(k) {
-    var name, ctrl, alt, shift;
-    var keys = k.split('-');
-    if (keys.length === 1) name = keys[0];
-    else name = keys[1], ctrl = keys[0] === 'ctrl', alt = keys[0] === 'alt', shift = keys[0] = 'shift'
-
-    hns.rli._ttyWrite(null, { name: name, ctrl: ctrl, alt: alt, shift: shift })
+    var keyObj;
+    try { 
+      keyObj = parseKey(k)
+    } catch(e) {
+      // XXX: probably should fix parse key to handle these cases (same for stringify key)
+      keyObj = { name: k }
+    }
+    hns.rli._ttyWrite(null, keyObj)
     hns.keyed = ' [' + k + '] '
   }
 
@@ -59,10 +64,14 @@ module.exports = function createHarness (readlineVim_) {
     hns.rlv.events.on('normal', function () { hns.normal++ })
     hns.rlv.events.on('insert', function () { hns.insert++ })
 
+    readlineVim.base_ttyWrite
+    hns.rlv.events.on('write', function (code, key) { hns.written.push({ code: code, key: key }) })
+
     hns.rlv.forceNormal()
     hns.resetModes()
 
-    hns.keyed = hns.coded = hns.seqed = undefined
+    hns.keyed = hns.coded = hns.seqed = hns.pressed = undefined
+    hns.written = []
     
     return hns;
   }

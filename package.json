@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "tap": "~0.3.3",
-    "stringify-key": "~0.1.1"
+    "stringify-key": "~0.1.1",
+    "parse-key": "~0.1.0"
   }
 }
