@@ -60,6 +60,28 @@ test('\nkey combinations in insert mode', function (t) {
    })
 })
 
+test('\nspecial keys in insert mode', function (t) {
+   t.test('\n# given I mapped [space] to escape', function (t) {
+    var map = createMap()
+    map.insert('space', 'escape')
+
+    t.equal(map.mappings.insert.immediates['space'], 'escape', 'it is added to the mappings under insert.immediates.space')
+    t.equal(map.matchInsert('space'), 'escape', 'matching [space] returns escape')
+
+    t.end()
+   })
+
+   t.test('\n# given I mapped [shift-space] to escape', function (t) {
+    var map = createMap()
+    map.insert('shift-space', 'escape')
+
+    t.equal(map.mappings.insert.immediates['shift-space'], 'escape', 'it is added to the mappings under insert.immediates.shift-space')
+    t.equal(map.matchInsert('shift-space'), 'escape', 'matching [shift-space] returns escape')
+
+    t.end()
+   })
+})
+
 test('\nkey combinations in normal mode', function (t) {
    t.test('\n# given I mapped [ctrl-i] to escape', function (t) {
     var map = createMap()
@@ -82,6 +104,28 @@ test('\nkey combinations in normal mode', function (t) {
     t.equal(map.matchNormal('shift-ctrl-i'), 'ctrl-p', 'matching [shift-ctrl-i] returns ctrl-p')
     t.equal(map.matchNormal('shift-ctrl-j'), undefined, 'matching [shift-ctrl-j] returns undefined')
     t.equal(map.matchNormal('ctrl-i'), undefined, 'matching [ctrl-i] returns undefined')
+
+    t.end()
+   })
+})
+
+test('\nspecial keys in normal mode', function (t) {
+   t.test('\n# given I mapped [space] to escape', function (t) {
+    var map = createMap()
+    map.normal('space', 'escape')
+
+    t.equal(map.mappings.normal.immediates['space'], 'escape', 'it is added to the mappings under normal.immediates.space')
+    t.equal(map.matchNormal('space'), 'escape', 'matching [space] returns escape')
+
+    t.end()
+   })
+
+   t.test('\n# given I mapped [shift-space] to escape', function (t) {
+    var map = createMap()
+    map.normal('shift-space', 'escape')
+
+    t.equal(map.mappings.normal.immediates['shift-space'], 'escape', 'it is added to the mappings under normal.immediates.shift-space')
+    t.equal(map.matchNormal('shift-space'), 'escape', 'matching [shift-space] returns escape')
 
     t.end()
    })
