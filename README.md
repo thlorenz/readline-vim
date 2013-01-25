@@ -43,6 +43,22 @@ map.normal('ctrl-space', 'j');
 
 Run it via: `npm run demo`
 
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Vim Bindings](#vim-bindings)
+  - [Insert Mode](#insert-mode)
+  - [Normal Mode](#normal-mode)
+    - [Movements](#movements)
+    - [Movements combined with Actions](#movements-combined-with-actions)
+    - [History](#history)
+- [Mappings](#mappings)
+  - [Immediate Mappings](#immediate-mappings)
+  - [Sequence Mappings](#sequence-mappings)
+  - [Inspecting Mappings](#inspecting-mappings)
+- [Events](#events)
+- [Forcing the Readline into a Mode](#forcing-the-readline-into-a-mode)
+- [Examples](#examples)
+
 ## Vim Bindings
 
 A subset of vim keybindings is supported by `readline-vim`:
