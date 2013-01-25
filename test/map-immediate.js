@@ -67,9 +67,9 @@ test('\ngiven I am in insert mode', function (t) {
     t.equal(hns.normal, 1, 'pressing ctrl-s switches to normal mode')
     t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything')
 
+    hns.rlv.forceInsert()
     hns.key('ctrl-k')
-    // XXX
-    //t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
+    t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
     
     t.end()
   })
