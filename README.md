@@ -10,14 +10,39 @@ Adds vim bindings to nodejs readline.
 
 **Repl Example:**
 ```js
-var rlv = require('readline-vim');
-var repl = require('repl');
+var rlv = require('readline-vim')
+  , repl = require('repl');
 
-var r = repl.start();
+var r = repl.start({
+    prompt: "vim repl > ",
+    input: process.stdin,
+    output: process.stdout
+  });
 
+var vim = rlv(r.rli)
+  , map = vim.map;
+
+// Add mappings
+
+// [insert mode] allow switching to normal mode by typing 'jk' quickly 
+map.insert('jk', 'esc');
+
+// [insert mode] go backward in history via 'ctrl-k' 
+map.insert('ctrl-k', 'ctrl-p');
+
+// [insert mode] go backward in history via 'ctrl-k' 
+map.insert('ctrl-space', 'ctrl-n');
+
+// [normal mode] go backward in history via space bar
+map.normal('space', 'k');
+
+// [normal mode] go forward in history via space bar when ctrl is pressed 
+map.normal('ctrl-space', 'j');
 // pass the readline component of the repl in order to add vim bindings to it
 rlv(r.rli);
 ```
+
+Run it via: `npm run demo`
 
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
@@ -71,3 +96,8 @@ A subset of vim keybindings is supported by `readline-vim`:
 - `k` go back in history
 - `j` go forward in history
 
+## Mappings
+
+### Immediate Mappings
+
+### Sequence Mappings
