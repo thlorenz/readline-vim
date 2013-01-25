@@ -4,6 +4,7 @@
   "description": "Adds vim bindings to nodejs readline.",
   "main": "readline-vim.js",
   "scripts": {
+    "demo": "node ./examples/repl",
     "test": "tap test"
   },
   "repository": {

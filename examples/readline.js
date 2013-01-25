@@ -1,5 +1,9 @@
 'use strict';
 
+// This example demonstrates how to use readline vim with a bare nodejs readline.
+// It is not as nice as the repl.js example, but has been included to show that no 
+// repl is needed, but a simple readline suffices.
+
 var readline = require('readline')
   , readlineVim = require('..')
   , rli = readline.createInterface(process.stdin, process.stdout)

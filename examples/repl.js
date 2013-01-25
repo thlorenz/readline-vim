@@ -28,7 +28,7 @@ map.insert('jk', 'esc');
 
 // [insert mode] go backward in history via 'ctrl-k' 
 map.insert('ctrl-k', 'ctrl-p');
-//
+
 // [insert mode] go backward in history via 'ctrl-k' 
 // (forward via 'ctrl-j' doesn't work since it is interpreted as 'enter')
 map.insert('ctrl-space', 'ctrl-n');
@@ -39,3 +39,7 @@ map.normal('space', 'k');
 // [normal mode] go forward in history via space bar when ctrl is pressed 
 // (shift wouldn't work with space since nodejs readline checks for uppercase)
 map.normal('ctrl-space', 'j');
+
+console.log('The following mappings have been added:\n %s', require('util').inspect(map.mappings, false, 5, true));
+console.log('\nConsult the comments inside examples/repl.js for more details.\n');
+r.displayPrompt();
