@@ -19,6 +19,7 @@ var r = repl.start({
     output: process.stdout
   });
 
+// pass the readline component of the repl in order to add vim bindings to it
 var vim = rlv(r.rli)
   , map = vim.map;
 
@@ -38,8 +39,6 @@ map.normal('space', 'k');
 
 // [normal mode] go forward in history via space bar when ctrl is pressed 
 map.normal('ctrl-space', 'j');
-// pass the readline component of the repl in order to add vim bindings to it
-rlv(r.rli);
 ```
 
 Run it via: `npm run demo`
