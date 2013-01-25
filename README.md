@@ -43,15 +43,6 @@ map.normal('ctrl-space', 'j');
 
 Run it via: `npm run demo`
 
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
-
-- [Vim Bindings](#vim-bindings)
-  - [Insert Mode](#insert-mode)
-  - [Normal Mode](#normal-mode)
-    - [Movements](#movements)
-    - [Movements combined with Actions](#movements-combined-with-actions)
-    - [History](#history)
-
 ## Vim Bindings
 
 A subset of vim keybindings is supported by `readline-vim`:
@@ -99,4 +90,30 @@ A subset of vim keybindings is supported by `readline-vim`:
 
 ### Immediate Mappings
 
+Immediate mappings execute immediately whe a key (possibly with modifiers) is pressed.
+
+They can be applied in insert and normal mode.
+
+```js
+// emit [esc] when [ctrl-space] is pressed to switch to normal mode
+map.insert('ctrl-space', 'esc');
+
+// emit [k] when [space] is pressed to go backward in history
+map.normal('space', 'k');
+```
+
 ### Sequence Mappings
+
+Sequence mappings are a number of keys **without modifiers** pressed quickly after another.
+
+They can be applied to **insert mode only**.
+
+```js
+// map [jk] pressed in quick succession to [esc] to switch to normal mode
+map.insert('jk', 'esc');
+```
+
+## Examples
+
+- [simple readline](https://github.com/thlorenz/readline-vim/blob/master/examples/readline.js)
+- [repl](https://github.com/thlorenz/readline-vim/blob/master/examples/repl.js)
