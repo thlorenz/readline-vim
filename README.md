@@ -118,9 +118,9 @@ map.insert('jk', 'esc');
 ```
 
 The interval allowed between keys in order to count as a sequence can be configured by setting `vim.threshold`, the
-default is `200 milliseconds`;
+default is `200 milliseconds`.
 
-## Inspecting Mappings
+### Inspecting Mappings
 
 You can inspect your mappings by navigating/printing the `vim.map.mappings` object.
 
@@ -141,7 +141,7 @@ vim.events.on('normal', function () {
 });
 ```
 
-## Forcing the Readline into Modes
+## Forcing the Readline into a Mode
 
 You can cause the `readline` to change to a particular mode and pass a `Boolean` to indicate if that mode change should
 be kept a secret (i.e. no event is emitted).
