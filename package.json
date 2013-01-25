@@ -28,8 +28,8 @@
     "sinon": "~1.5.2"
   },
   "dependencies": {
-    "stringify-key": "~0.1.1",
-    "parse-key": "~0.1.0",
-    "tap": "~0.4.0"
+    "tap": "~0.4.0",
+    "stringify-key": "~0.1.2",
+    "parse-key": "~0.1.1"
   }
 }
