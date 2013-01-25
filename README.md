@@ -94,6 +94,8 @@ Immediate mappings execute immediately whe a key (possibly with modifiers) is pr
 
 They can be applied in insert and normal mode.
 
+Assuming we defined `vim` and `map` as outlined in the [usage examle](#usage).
+
 ```js
 // emit [esc] when [ctrl-space] is pressed to switch to normal mode
 map.insert('ctrl-space', 'esc');
@@ -108,9 +110,45 @@ Sequence mappings are a number of keys **without modifiers** pressed quickly aft
 
 They can be applied to **insert mode only**.
 
+Assuming we defined `vim` and `map` as outlined in the [usage examle](#usage).
+
 ```js
 // map [jk] pressed in quick succession to [esc] to switch to normal mode
 map.insert('jk', 'esc');
+```
+
+The interval allowed between keys in order to count as a sequence can be configured by setting `vim.threshold`, the
+default is `200 milliseconds`;
+
+## Inspecting Mappings
+
+You can inspect your mappings by navigating/printing the `vim.map.mappings` object.
+
+## Events
+
+The following events are emitted to allow reacting to state changes:
+
+- `normal` when mode changes to normal
+- `insert` when mode changes to insert
+- `write` when a key is written to the underlying `readline` (i.e. it wasn't handled by `readline-vim` and therefore
+  passed through
+
+These events are exposed via `vim.events`, so to subscribe to normal mode changes you would do:
+
+```js
+vim.events.on('normal', function () {
+  // do something here to react
+});
+```
+
+## Forcing the Readline into Modes
+
+You can cause the `readline` to change to a particular mode and pass a `Boolean` to indicate if that mode change should
+be kept a secret (i.e. no event is emitted).
+
+```js
+vim.forceInsert();      // changes mode to insert and emits 'insert' event
+vim.forceNormal(true);  // changes mode to normal, but emits no event
 ```
 
 ## Examples
