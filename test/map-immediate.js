@@ -57,6 +57,22 @@ test('\ngiven I am in insert mode', function (t) {
     
     t.end()
   })
+
+  t.test('\nand I mapped insert mode [ctrl-s] to [esc]', function (t) {
+    insertModeSetup()
+
+    matchInsert.withArgs('ctrl-s').returns('esc')
+
+    hns.key('ctrl-s')
+    t.equal(hns.normal, 1, 'pressing ctrl-s switches to normal mode')
+    t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything')
+
+    hns.key('ctrl-k')
+    // XXX
+    //t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
+    
+    t.end()
+  })
 })
 
 test('\ngiven I am in normal mode', function (t) {

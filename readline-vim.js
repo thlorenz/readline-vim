@@ -73,3 +73,4 @@ var vim = override(rli);
 var map = vim.map;
 map.insert('jk', 'esc');
 map.insert('ctrl-k', 'ctrl-p');
+map.insert('ctrl-s', 'esc');
