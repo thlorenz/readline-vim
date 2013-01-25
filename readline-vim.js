@@ -3,6 +3,7 @@ var EventEmitter =  require('events').EventEmitter
   , createMap    =  require('./lib/map')
   , createInsert =  require('./lib/insert-mode')
   , createNormal =  require('./lib/normal-mode')
+  , shimKey      =  require('./lib/shim-key')
   , utl          =  require('./lib/utl')
   , log          =  utl.log
   , logl         =  utl.logl
@@ -57,6 +58,10 @@ var override = module.exports = function override_ttyWrite(rli) {
   rli._ttyWrite = function(code, key) {
     key = key || {};
 
+    var shimmed = shimKey(code, key);
+    code = shimmed.code;
+    key = shimmed.key;
+
     if (!isnormal) return insert.handleInput(code, key);
     
     // check for maps first
@@ -65,12 +70,3 @@ var override = module.exports = function override_ttyWrite(rli) {
 
   return vim;
 };
-
-if (module.parent) return;
-
-var rli = utl.readline();
-var vim = override(rli);
-var map = vim.map;
-map.insert('jk', 'esc');
-map.insert('ctrl-k', 'ctrl-p');
-map.insert('ctrl-s', 'esc');
