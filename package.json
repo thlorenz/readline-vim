@@ -26,10 +26,10 @@
   "devDependencies": {
     "trap": "git://github.com/thlorenz/trap.git#ok",
     "proxyquire": "~0.4.0",
-    "sinon": "~1.5.2"
+    "sinon": "~1.5.2",
+    "tap": "~0.4.0"
   },
   "dependencies": {
-    "tap": "~0.4.0",
     "stringify-key": "~0.1.2",
     "parse-key": "~0.1.1"
   }
