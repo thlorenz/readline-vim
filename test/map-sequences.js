@@ -21,7 +21,7 @@ function setup() {
 
   var readlineVim = proxyquire('..', stubs)
   hns = createHarness(readlineVim)
-  hns.rlv.threshold = threshold / 2 
+  hns.rlw.threshold = threshold / 2 
 }
 
 test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', function (t) {
@@ -31,7 +31,7 @@ test('\ngiven I mapped insert mode [lk] to escape and am in insert mode', functi
     matchInsert.withArgs(['l']).returns(true)
     matchInsert.withArgs(['l', 'k']).returns('escape')
 
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
   }
 
   t.test('\n# when I type [lk] quickly', function (t) {

@@ -25,7 +25,7 @@ function setup() {
 test('\ngiven I am in insert mode', function (t) {
   function insertModeSetup() {
     setup()
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
   }
   
   t.test('\nand I mapped insert mode [ctrl-s] to [ctrl-p]', function (t) {
@@ -67,7 +67,7 @@ test('\ngiven I am in insert mode', function (t) {
     t.equal(hns.normal, 1, 'pressing ctrl-s switches to normal mode')
     t.equal(hns.writtenStr.pop(), undefined, 'it does not emit anything')
 
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
     hns.key('ctrl-k')
     t.equal(hns.writtenStr.pop(), 'ctrl-k', 'pressing ctrl-k emits ctrl-k')
     
@@ -78,7 +78,7 @@ test('\ngiven I am in insert mode', function (t) {
 test('\ngiven I am in normal mode', function (t) {
   function normalModeSetup() {
     setup()
-    hns.rlv.forceNormal()
+    hns.rlw.forceNormal()
   }
   
   t.test('\nand I mapped normal mode [s] to k', function (t) {

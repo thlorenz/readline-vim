@@ -6,7 +6,7 @@ var test = require('tap').test
 
 test('\nswitching to normal mode', function (t) {
   hns.reset()
-  hns.rlv.forceInsert()
+  hns.rlw.forceInsert()
   
   var k = 'escape'
   hns.key(k)
@@ -15,7 +15,7 @@ test('\nswitching to normal mode', function (t) {
   t.equal(hns.normal, 1, 'when in normal mode,' + hns.keyed + 'not switches to normal mode')
 
   hns.rli.reset()
-  hns.rlv.forceInsert()
+  hns.rlw.forceInsert()
 
   k = 'Ctrl-['
   hns.key(k)
@@ -35,7 +35,7 @@ test('\nswitching to insert mode', function (t) {
   }
 
   hns.reset()
-  hns.rlv.forceInsert(true)
+  hns.rlw.forceInsert(true)
 
   hns.key('i')
   t.equal(hns.insert, 0, 'when in insert mode,' + hns.keyed + 'not switches to insert mode')

@@ -8,20 +8,20 @@ test('movement keys move cursor in normal mode, but not in insert mode, tests st
 
   function checkOneMove(k, cursor) {
     hns.reset()
-    hns.rlv.forceNormal()
+    hns.rlw.forceNormal()
     hns.key(k)
     t.equal(hns.rli.moveCursor.pop(), cursor, hns.keyed + 'moves cursor ' + Math.abs(cursor) + ' to ' + (cursor < 0 ? 'left' : 'right') )
     t.notOk(hns.rli.moveCursor.pop(), 'causes no more movements')
 
     hns.reset()
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
     hns.key(k)
     t.notOk(hns.rli.moveCursor.pop(), 'causes no movements in insert mode')
   }
 
   function checkOneMoveCode(code, cursor) {
     hns.reset()
-    hns.rlv.forceNormal()
+    hns.rlw.forceNormal()
     hns.code(code)
     
     var tgt
@@ -32,7 +32,7 @@ test('movement keys move cursor in normal mode, but not in insert mode, tests st
     t.notOk(hns.rli.moveCursor.pop(), 'causes no more movements')
 
     hns.reset()
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
     hns.code(code)
     t.notOk(hns.rli.moveCursor.pop(), 'causes no movements in insert mode')
   }
@@ -41,13 +41,13 @@ test('movement keys move cursor in normal mode, but not in insert mode, tests st
     var move = 'word' + direction[0].toUpperCase() + direction.slice(1)
 
     hns.reset()
-    hns.rlv.forceNormal()
+    hns.rlw.forceNormal()
     hns.key(k)
 
     t.equal(hns.rli[move], 1, hns.keyed + 'moves one word ' + direction)
 
     hns.reset()
-    hns.rlv.forceInsert()
+    hns.rlw.forceInsert()
     hns.key(k)
     t.notOk(hns.rli.moveCursor.pop(), 'causes no movements in insert mode')
   }

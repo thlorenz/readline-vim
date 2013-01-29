@@ -1,89 +1,40 @@
 'use strict';
 /*jshint asi: true*/
 
-var createRli = require('../fakes/readline')
-  , parseKey = require('parse-key')
-  , stringifyKey = require('stringify-key')
-
+var readlineHarness = require('readline-testharness')
+  , stringifyKey = require('stringify-key');
 
 module.exports = function createHarness (readlineVim_) { 
   var readlineVim = readlineVim_ || require('../..')
-  var hns = {
-      rli        : undefined 
-    , rlv        : undefined 
-    , normal     : undefined
-    , insert     : undefined
-    , resetModes : resetModes
-    , reset      : reset
-    , key        : key
-    , code       : code
-    , seq        : seq
-    , keyed      : undefined
-    , coded      : undefined
-    , seqed      : undefined
-    , written    : []
-    , writtenStr : []
-  };
+    , hns = readlineHarness(readlineVim)
 
-  function key(k) {
-    var keyObj;
-    try { 
-      keyObj = parseKey(k)
-    } catch(e) {
-      // XXX: probably should fix parse key to handle these cases (same for stringify key)
-      keyObj = { name: k }
-    }
-    hns.rli._ttyWrite(null, keyObj)
-    hns.keyed = ' [' + k + '] '
+  hns.written    = [] 
+  hns.writtenStr = []
+
+  hns.resetModes = function () {
+    hns.normal = 0;
+    hns.insert = 0;
   }
 
-  function code(code_) {
-    hns.rli._ttyWrite(code_, { })
-    hns.coded = ' [' + code_ + '] '
-  }
+  hns.onreset = function onreset() {
+    hns.rlw.events.removeAllListeners();
+    hns.rlw.events.on('normal', function () { hns.normal++; });
+    hns.rlw.events.on('insert', function () { hns.insert++; });
 
-  function seq(seq_) {
-    var keys = seq_.split(' ')
-
-    // since we are dealing with a sequence here, it makes sense to reset
-    hns.reset()
-
-    hns.key(keys.shift())
-    hns.key(keys.shift())
-    hns.seqed = ' [' + seq_ + '] '
-  }
-
-  function resetModes() {
-    hns.normal = 0
-    hns.insert = 0
-  }
-
-  function reset() {
-    hns.rli = createRli()
-    hns.rlv = readlineVim(hns.rli)
-
-    hns.rlv.events.removeAllListeners()
-    hns.rlv.events.on('normal', function () { hns.normal++ })
-    hns.rlv.events.on('insert', function () { hns.insert++ })
-
-    readlineVim.base_ttyWrite
-    hns.rlv.events.on('write', function (code, key) { 
-      hns.written.push({ code: code, key: key }) 
+    hns.rlw.events.on('write', function (code, key) { 
+      hns.written.push({ code: code, key: key }) ;
       try { 
-        hns.writtenStr.push(stringifyKey(key)) 
-      } catch (e) { console.error(e) }
-    })
+        hns.writtenStr.push(stringifyKey(key)); 
+      } catch (e) { console.error(e); }
+    });
+    hns.rlw.forceNormal();
 
-    hns.rlv.forceNormal()
-    hns.resetModes()
+    hns.written    =  [];
+    hns.writtenStr =  [];
 
-    hns.keyed = hns.coded = hns.seqed = hns.pressed = undefined
-    hns.written = [] 
-    hns.writtenStr = []
-    
-    return hns;
+    hns.resetModes();
   }
-  reset()
 
+  hns.onreset();
   return hns;
 };

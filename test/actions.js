@@ -11,7 +11,7 @@ test('\ndelete', function (t) {
   t.equal(hns.rli.deleteLineRight, 1, hns.keyed + 'deletes line right once')
 
   hns.reset()
-  hns.rlv.forceInsert()
+  hns.rlw.forceInsert()
 
   hns.key('shift-d')
   t.equal(hns.rli.deleteLineLeft, 0, 'in insert mode' + hns.keyed + 'does not delete line left')
