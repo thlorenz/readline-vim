@@ -6,7 +6,7 @@ var readlineHarness = require('readline-testharness')
 
 module.exports = function createHarness (readlineVim_) { 
   var readlineVim = readlineVim_ || require('../..')
-    , hns = readlineHarness(readlineVim)
+    , hns = readlineHarness.create(readlineVim)
 
   hns.written    = [] 
   hns.writtenStr = []
