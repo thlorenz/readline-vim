@@ -58,6 +58,9 @@ var override = module.exports = function override_ttyWrite(rli) {
   rli._ttyWrite = function(code, key) {
     key = key || {};
 
+    logl({ code: code });
+    logl(key);
+
     var shimmed = shimKey(code, key);
     code = shimmed.code;
     key = shimmed.key;
