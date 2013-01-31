@@ -13,8 +13,10 @@ test('given the line contains 0123456789', function (t) {
   t.test('and the cursor is at position 0', function (t) {
     function setupCursor() {
       setup()  
-      rli.cursor = 0
+      hns.rli.cursor = 0
     }
+
+    t.end()
   })
 
   
