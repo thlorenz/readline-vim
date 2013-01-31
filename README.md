@@ -50,6 +50,7 @@ Run it via: `npm run demo`
   - [Normal Mode](#normal-mode)
     - [Movements](#movements)
     - [Movements combined with Actions](#movements-combined-with-actions)
+    - [Replacements](#replacements)
     - [History](#history)
 - [Mappings](#mappings)
   - [Immediate Mappings](#immediate-mappings)
@@ -96,6 +97,10 @@ A subset of vim keybindings is supported by `readline-vim`:
 
 - `x` delete right
 - `X` delete left
+
+#### Replacement
+
+- `r` followed by letter replaces letter under the cursor with the given letter (i.e. `rx`)
 
 #### History
 
