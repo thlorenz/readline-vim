@@ -27,7 +27,7 @@
     "proxyquire": "~0.4.0",
     "sinon": "~1.5.2",
     "tap": "~0.4.0",
-    "readline-testharness": "~0.1.4"
+    "readline-testharness": "~0.2.0"
   },
   "dependencies": {
     "stringify-key": "~0.1.2",

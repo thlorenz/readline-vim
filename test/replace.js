@@ -6,7 +6,7 @@ var test = require('tap').test
 
 test('\nreplace followed by a letter key', function (t) {
 
-  hns.seq('r o')
+  hns.reset().seq('r o')
   t.equal(hns.rli.deleteRight, 1, hns.seqed + 'deletes right once')
   t.equal(hns.rli.ttyWrite.length, 1, 'outputs one char')
   t.equal(hns.rli.ttyWrite[0].key.name, 'o', 'outputs o')
@@ -18,7 +18,7 @@ test('\nreplace followed by a letter key', function (t) {
 
 test('\nreplace followed by an uppercase letter key', function (t) {
 
-  hns.seq('r shift-o')
+  hns.reset().seq('r shift-o')
   t.equal(hns.rli.deleteRight, 1, hns.seqed + 'deletes right once')
   t.equal(hns.rli.ttyWrite.length, 1, 'outputs one char')
   t.equal(hns.rli.ttyWrite[0].key.name, 'o', 'outputs o')
@@ -30,7 +30,7 @@ test('\nreplace followed by an uppercase letter key', function (t) {
 
 test('\nreplace followed by backspace', function (t) {
 
-  hns.seq('r backspace')
+  hns.reset().seq('r backspace')
   t.equal(hns.rli.deleteRight, 0, hns.seqed + 'does not delete right')
   t.equal(hns.rli.ttyWrite.length, 0, 'outputs no char')
   t.equal(hns.rli.moveCursor.length, 0, 'does not tell rli to move cursor')
@@ -42,7 +42,7 @@ test('\nreplace followed by space', function (t) {
 
   // TODO: probably be better to replace with space, but due to improper key reporting (see shim key) space
   // is currently problematic
-  hns.seq('r space')
+  hns.reset().seq('r space')
   t.equal(hns.rli.deleteRight, 0, hns.seqed + 'does not delete right')
   t.equal(hns.rli.ttyWrite.length, 0, 'outputs no char')
   t.equal(hns.rli.moveCursor.length, 0, 'does not tell rli to move cursor')

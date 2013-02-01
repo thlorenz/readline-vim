@@ -4,17 +4,20 @@
 var test = require('tap').test
   , hns = require('./utils/harness')()
 
-test('given the line contains 0123456789', function (t) {
+  // TODO: testharness should no longer reset on seq, fix tests to still work and publish new test harness
+
+test('given the line contains hello world', function (t) {
   function setup() {
     hns.reset()
-    hns.rli.line = '0123456789'
+    //              01234567890                      
+    hns.rli.line = 'hello world'
   }
 
   t.test('and the cursor is at position 0', function (t) {
-    function setupCursor() {
-      setup()  
-      hns.rli.cursor = 0
-    }
+    hns.rli.cursor = 0
+
+    hns.seq('f e')
+    t.equal(hns.moveCursor.pop(), 1, hns.seqed + 'moves cursor to e')
 
     t.end()
   })
