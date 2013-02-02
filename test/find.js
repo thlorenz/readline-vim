@@ -8,7 +8,7 @@ test('\ngiven the line contains hello world', function (t) {
   function setup() {
     hns.reset()
     //              01234567890                      
-    hns.rli.line = 'hello world'
+    hns.rli.line = 'hello wOrld'
   }
 
   t.test('\n# and the cursor is at position 0', function (t) {
@@ -17,8 +17,6 @@ test('\ngiven the line contains hello world', function (t) {
       hns.rli.cursor = 0
     }
 
-    // TODO: make space work
-    
     setupCursorAt_0()
     hns.seq('f e')
     t.equal(hns.rli.moveCursor.pop(), 1, hns.seqed + 'moves cursor to e')
@@ -28,12 +26,28 @@ test('\ngiven the line contains hello world', function (t) {
     t.equal(hns.rli.moveCursor.length, 0, hns.seqed + 'does not move cursor')
 
     setupCursorAt_0()
+    hns.seq('f space')
+    t.equal(hns.rli.moveCursor.pop(), 5, hns.seqed + 'moves cursor to space')
+
+    setupCursorAt_0()
+    hns.seq('t space')
+    t.equal(hns.rli.moveCursor.pop(), 4, hns.seqed + 'moves cursor up to space')
+
+    setupCursorAt_0()
     hns.seq('f l')
     t.equal(hns.rli.moveCursor.pop(), 2, hns.seqed + 'moves cursor to l')
 
     setupCursorAt_0()
     hns.seq('t l')
     t.equal(hns.rli.moveCursor.pop(), 1, hns.seqed + 'moves cursor up to l')
+
+    setupCursorAt_0()
+    hns.seq('f o')
+    t.equal(hns.rli.moveCursor.pop(), 4, hns.seqed + 'moves cursor to o')
+
+    setupCursorAt_0()
+    hns.seq('f shift-o')
+    t.equal(hns.rli.moveCursor.pop(), 7, hns.seqed + 'moves cursor to O')
 
     t.end()
   })
