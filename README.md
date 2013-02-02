@@ -80,6 +80,7 @@ A subset of vim keybindings is supported by `readline-vim`:
 - `b` word left
 - `0` beginning of line
 - `$` end of line
+- `f`, `F`, `t`, `T` followed by letter moves cursor to or up to the given letter
 
 #### Movements combined with Actions
 
