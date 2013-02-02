@@ -48,3 +48,15 @@ test('\nreplace followed by space', function (t) {
 
   t.end()
 })
+
+test('\nreplace followed by a paren', function (t) {
+
+  hns.reset().seq('r )')
+  t.equal(hns.rli.deleteRight, 1, hns.seqed + 'deletes right once')
+  t.equal(hns.rli.ttyWrite.length, 1, 'outputs one char')
+  t.equal(hns.rli.ttyWrite[0].key.name, ')', 'outputs )')
+  t.equal(hns.rli.moveCursor.pop(), -1, 'moves cursor left once')
+
+  t.end()
+})
+
