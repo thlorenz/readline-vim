@@ -88,13 +88,15 @@ A subset of vim keybindings is supported by `readline-vim`:
 - `cw`: change word right
 - `ch`: change left
 - `cl`: change right
-- `cc`, `C` change line
+- `cc`: change line
+- `C` : change line right
 
 - `db`: delete word left
 - `dw`: delete word right
 - `dh`: delete left
 - `dl`: delete right
-- `dd`, `D` delete line
+- `dd`: delete line
+- `D` : delete line right
 
 - `x` delete right
 - `X` delete left

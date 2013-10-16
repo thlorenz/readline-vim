@@ -7,7 +7,7 @@ var test = require('tap').test
 test('\ndelete', function (t) {
 
   hns.key('shift-d')
-  t.equal(hns.rli.deleteLineLeft, 1, hns.keyed + 'deletes line left once')
+  t.equal(hns.rli.deleteLineLeft, 0, hns.keyed + 'does not delete line left')
   t.equal(hns.rli.deleteLineRight, 1, hns.keyed + 'deletes line right once')
 
   hns.reset()
@@ -40,9 +40,13 @@ test('\nchange', function (t) {
 
   hns.reset().key('shift-c')
 
-  t.equal(hns.rli.deleteLineLeft, 1, hns.keyed + 'deletes line left once')
+  t.equal(hns.rli.deleteLineLeft, 0, hns.keyed + 'does not delete line left')
   t.equal(hns.rli.deleteLineRight, 1, hns.keyed + 'deletes line right once')
   t.equal(hns.insert, 1, 'switches to insert mode')
+
+  hns.reset().key('c')
+  t.equal(hns.rli.deleteLineLeft, 0, hns.keyed + 'does not delete line left')
+  t.equal(hns.rli.deleteLineRight, 0, hns.keyed + 'does not delete line right')
 
   hns.seq('c c')
 
